@@ -11,9 +11,9 @@ namespace AggregateGDPPopulation.Tests
         [Fact]
         public void test1()
         {
-            Class1.AggregateGdpPop(@"D:\workspace\CSharp\Assignments\aggregate-gdp-population-csharp-problem-palashw\AggregateGDPPopulation\data\datafile.csv");
-            string actual = File.ReadAllText(@"D:\workspace\CSharp\Assignments\aggregate-gdp-population-csharp-problem-palashw\AggregateGDPPopulation.Tests\expected-output.json");
-            string expected = File.ReadAllText(@"D:\workspace\CSharp\Assignments\aggregate-gdp-population-csharp-problem-palashw\AggregateGDPPopulation\data\output.json");
+            Class1.AggregateGdpPop(@"../../../../AggregateGDPPopulation/data/datafile.csv");
+            string actual = File.ReadAllText(@"../../../expected-output.json");
+            string expected = File.ReadAllText(@"../../../../AggregateGDPPopulation/data/output.json");
             Dictionary<string, POPGDPObject> actualjson = JsonConvert.DeserializeObject<Dictionary<string, POPGDPObject>>(actual);
             Dictionary<string, POPGDPObject> expectedjson = JsonConvert.DeserializeObject<Dictionary<string, POPGDPObject>>(expected);
             foreach (var key in actualjson.Keys)

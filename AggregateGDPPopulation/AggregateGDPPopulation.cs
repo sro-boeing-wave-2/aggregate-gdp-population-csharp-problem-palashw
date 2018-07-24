@@ -23,7 +23,8 @@ namespace AggregateGDPPopulation
             int indexgdp = Array.IndexOf(headers, "\"GDP Billions (USD) 2012\"");
             int indexpop = Array.IndexOf(headers, "\"Population (Millions) 2012\"");
 
-            string[] countrymap = File.ReadAllLines(@"D:\workspace\CSharp\Assignments\aggregate-gdp-population-csharp-problem-palashw\AggregateGDPPopulation\data\countriesmap.txt");
+            string[] countrymap = File.ReadAllLines(@"../../../../AggregateGDPPopulation/data/countriesmap.txt");
+            Console.WriteLine(countrymap[0]);
             Dictionary<string, string> mapper = new Dictionary<string, string>();
 
             foreach (string str in countrymap)
@@ -63,7 +64,7 @@ namespace AggregateGDPPopulation
             catch (Exception){ }
 
             var jsonString = JsonConvert.SerializeObject(finalobjects);
-            File.WriteAllText(@"D:\workspace\CSharp\Assignments\aggregate-gdp-population-csharp-problem-palashw\AggregateGDPPopulation\data\output.json", jsonString);
+            File.WriteAllText(@"../../../../AggregateGDPPopulation/data/output.json", jsonString);
             //string oppath = @"D:\workspace\CSharp\Assignments\aggregate - gdp - population - csharp - problem - palashw\AggregateGDPPopulation\data\output";
             //try
             //{
