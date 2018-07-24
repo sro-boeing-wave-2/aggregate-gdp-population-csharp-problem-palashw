@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.IO;
-using System;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace AggregateGDPPopulation
 {
