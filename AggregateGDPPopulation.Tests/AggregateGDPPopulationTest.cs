@@ -3,6 +3,8 @@ using Xunit;
 using System.IO;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using AggregateGDPPopulation;
+using System.Threading.Tasks;
 
 namespace AggregateGDPPopulation.Tests
 {
@@ -12,11 +14,11 @@ namespace AggregateGDPPopulation.Tests
         public void test1()
         {
             //calling the function
-            Class1.AggregateGdpPop(@"../../../../AggregateGDPPopulation/data/datafile.csv");
+            AggregatePopGDPSync.AggregateGdpPop(@"../../../../AggregateGDPPopulation/data/datafile.csv");
 
             //storing files for comparison
-            string actual = File.ReadAllText(@"../../../expected-output.json");
-            string expected = File.ReadAllText(@"../../../../AggregateGDPPopulation/data/output.json");
+            string expected = File.ReadAllText(@"../../../expected-output.json");
+            string actual = File.ReadAllText(@"../../../../AggregateGDPPopulation/data/output.json");
 
             //making and comparing json objects for output and expected output
             Dictionary<string, POPGDPObject> actualjson = JsonConvert.DeserializeObject<Dictionary<string, POPGDPObject>>(actual);
@@ -33,6 +35,20 @@ namespace AggregateGDPPopulation.Tests
                     Assert.True(false);
                 }
             }
+
+        }
+
+        [Fact]
+        async public void test2()
+        {
+            await AggregatePopGDPAsync.AggregateGdpPopAsync(@"../../../../AggregateGDPPopulation/data/datafile.csv");
+
+            Task<string> expected = AggregatePopGDPAsync.ReadfileAsync(@"../../../expected-output.json");
+            Task<string> actual = AggregatePopGDPAsync.ReadfileAsync(@"../../../../AggregateGDPPopulation/data/output.json");
+            string expecteddata = await expected;
+            string actualdata = await actual;
+
+            Assert.Equal(expecteddata, actualdata);
 
         }
     }

@@ -109,7 +109,6 @@ Cyprus,Europe
 CZ,Europe
 Denmark,Europe
 Estonia,Europe
-European Union,Europe
 Finland,Europe
 France,Europe
 Georgia,Europe

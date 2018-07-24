@@ -2,6 +2,8 @@
 using System.IO;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Linq;
 
 namespace AggregateGDPPopulation
 {
@@ -12,7 +14,7 @@ namespace AggregateGDPPopulation
 
     };
 
-    public class Class1
+    public class AggregatePopGDPSync
     {
         public static void AggregateGdpPop(string filename)
         {   //reading in csv data and making headers array
@@ -41,7 +43,7 @@ namespace AggregateGDPPopulation
             try
             {
 
-                for (int i = 1; i < csvdata.Length - 1; i++)
+                for (int i = 1; i < csvdata.Length; i++)
                 {
                     string[] datarow = csvdata[i].Replace("\"", "").Split(',');
                     
@@ -70,6 +72,93 @@ namespace AggregateGDPPopulation
             var jsonString = JsonConvert.SerializeObject(finalobjects);
             File.WriteAllText(@"../../../../AggregateGDPPopulation/data/output.json", jsonString);
         }
+    }
+
+    public class AggregatePopGDPAsync
+    {
+        public static async Task<string> ReadfileAsync(string filepath)
+        {
+            string csvdata;
+            using(StreamReader r = new StreamReader(filepath))
+            {
+                csvdata = await r.ReadToEndAsync();
+            }
+            return csvdata;
+        }
+
+        public static async Task WritefileAsync(string outputpath, Dictionary<string, POPGDPObject> finalobjects)
+        {
+            using (StreamWriter w = new StreamWriter(outputpath))
+            {
+                await w.WriteAsync(JsonConvert.SerializeObject(finalobjects));
+            }
+        }
+
+        public static async Task AggregateGdpPopAsync(string filename)
+        {
+            Task<string> csvdatatask = ReadfileAsync(filename);
+            Task<string> mapperdatatask = ReadfileAsync(@"../../../../AggregateGDPPopulation/data/countriesmap.txt");
+
+            await Task.WhenAll(csvdatatask, mapperdatatask);
+
+            string csvdata = csvdatatask.Result;
+            string mapperdata = mapperdatatask.Result;
+            
+            // making mapper dictionary
+            string[] countrymap = mapperdata.Split('\n');
+            //Console.WriteLine(countrymap);
+            Dictionary<string, string> mapper = new Dictionary<string, string>();
+
+            foreach (string str in countrymap)
+            {
+                string[] row = str.Split(',');
+                //Console.WriteLine(row[0]);
+                mapper[row[0]] = row[1];
+            }
+            
+            // making csv data
+            string[] data = csvdata.Split('\n');
+            string[] headers = data[0].Split(',');
+            int indexcountry = Array.IndexOf(headers, "\"Country Name\"");
+            int indexgdp = Array.IndexOf(headers, "\"GDP Billions (USD) 2012\"");
+            //Console.WriteLine(indexgdp);
+            int indexpop = Array.IndexOf(headers, "\"Population (Millions) 2012\"");
+
+            Dictionary<string, POPGDPObject> finalobjects = new Dictionary<string, POPGDPObject>();
+
+            try
+            {
+
+                for (int i = 1; i < data.Length; i++)
+                {
+                    string[] datarow = data[i].Replace("\"", "").Split(',');
+
+                    if (!finalobjects.ContainsKey(mapper[datarow[indexcountry]]))
+                    {
+                        finalobjects[mapper[datarow[indexcountry]]] = new POPGDPObject();
+                        finalobjects[mapper[datarow[indexcountry]]]
+                          .GDP_2012 = float.Parse(datarow[indexgdp]);
+                        finalobjects[mapper[datarow[indexcountry]]]
+                          .POPULATION_2012 = float.Parse(datarow[indexpop]);
+                    }
+                    else
+                    {
+                        finalobjects[mapper[datarow[indexcountry]]]
+                          .GDP_2012 += float.Parse(datarow[indexgdp]);
+                        finalobjects[mapper[datarow[indexcountry]]]
+                          .POPULATION_2012 += float.Parse(datarow[indexpop]);
+                    }
+
+                }
+
+            }
+            catch (Exception) { }
+
+            await WritefileAsync(@"../../../../AggregateGDPPopulation/data/output.json", finalobjects);
+            
+        }
+
+
     }
 
 }
