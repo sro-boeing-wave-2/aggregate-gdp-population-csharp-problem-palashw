@@ -41,13 +41,13 @@ namespace AggregateGDPPopulation.Tests
         [Fact]
         async public void test2()
         {
+            // calling function to aggregate
             await AggregatePopGDPAsync.AggregateGdpPopAsync(@"../../../../AggregateGDPPopulation/data/datafile.csv");
-
-            Task<string> expected = AggregatePopGDPAsync.ReadfileAsync(@"../../../expected-output.json");
-            Task<string> actual = AggregatePopGDPAsync.ReadfileAsync(@"../../../../AggregateGDPPopulation/data/output.json");
-            string expecteddata = await expected;
-            string actualdata = await actual;
-
+           
+            // creating actual and expected strings to compare
+            string expecteddata = await AggregatePopGDPAsync.ReadfileAsync(@"../../../expected-output.json"); ;
+            string actualdata = await AggregatePopGDPAsync.ReadfileAsync(@"../../../../AggregateGDPPopulation/data/output.json");
+            
             Assert.Equal(expecteddata, actualdata);
 
         }

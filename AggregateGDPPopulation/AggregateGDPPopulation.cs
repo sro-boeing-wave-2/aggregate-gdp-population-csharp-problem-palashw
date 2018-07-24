@@ -106,13 +106,11 @@ namespace AggregateGDPPopulation
             
             // making mapper dictionary
             string[] countrymap = mapperdata.Split('\n');
-            //Console.WriteLine(countrymap);
             Dictionary<string, string> mapper = new Dictionary<string, string>();
 
             foreach (string str in countrymap)
             {
                 string[] row = str.Split(',');
-                //Console.WriteLine(row[0]);
                 mapper[row[0]] = row[1];
             }
             
@@ -121,11 +119,11 @@ namespace AggregateGDPPopulation
             string[] headers = data[0].Split(',');
             int indexcountry = Array.IndexOf(headers, "\"Country Name\"");
             int indexgdp = Array.IndexOf(headers, "\"GDP Billions (USD) 2012\"");
-            //Console.WriteLine(indexgdp);
             int indexpop = Array.IndexOf(headers, "\"Population (Millions) 2012\"");
 
             Dictionary<string, POPGDPObject> finalobjects = new Dictionary<string, POPGDPObject>();
 
+            // aggregating
             try
             {
 
@@ -154,6 +152,7 @@ namespace AggregateGDPPopulation
             }
             catch (Exception) { }
 
+            // writing to json
             await WritefileAsync(@"../../../../AggregateGDPPopulation/data/output.json", finalobjects);
             
         }
