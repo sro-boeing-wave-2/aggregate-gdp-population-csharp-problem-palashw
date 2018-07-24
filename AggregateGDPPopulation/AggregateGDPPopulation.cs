@@ -19,10 +19,12 @@ namespace AggregateGDPPopulation
             string[] csvdata = File.ReadAllLines(filename);
             string[] headers = csvdata[0].Split(',');
 
+            //storing indices of required fields
             int indexcountry = Array.IndexOf(headers, "\"Country Name\"");
             int indexgdp = Array.IndexOf(headers, "\"GDP Billions (USD) 2012\"");
             int indexpop = Array.IndexOf(headers, "\"Population (Millions) 2012\"");
 
+            //reading country continent map text file and making dictionary for the mapping
             string[] countrymap = File.ReadAllLines(@"../../../../AggregateGDPPopulation/data/countriesmap.txt");
             Console.WriteLine(countrymap[0]);
             Dictionary<string, string> mapper = new Dictionary<string, string>();
@@ -33,6 +35,7 @@ namespace AggregateGDPPopulation
                 mapper[row[0]] = row[1];
             }
 
+            // declaring finalobjects dictionary to store final object format of output
             Dictionary<string, POPGDPObject> finalobjects = new Dictionary<string, POPGDPObject>();
 
             try
@@ -63,18 +66,9 @@ namespace AggregateGDPPopulation
             }
             catch (Exception){ }
 
+            // converiting and writing to json
             var jsonString = JsonConvert.SerializeObject(finalobjects);
             File.WriteAllText(@"../../../../AggregateGDPPopulation/data/output.json", jsonString);
-            //string oppath = @"D:\workspace\CSharp\Assignments\aggregate - gdp - population - csharp - problem - palashw\AggregateGDPPopulation\data\output";
-            //try
-            //{
-            //    File.WriteAllText(oppath+@"\output.json", jsonString);
-            //}
-            //catch (Exception e)
-            //{
-            //    Directory.CreateDirectory(oppath);
-            //    File.WriteAllText(oppath + @"\output.json", jsonString);
-            //}
         }
     }
 
