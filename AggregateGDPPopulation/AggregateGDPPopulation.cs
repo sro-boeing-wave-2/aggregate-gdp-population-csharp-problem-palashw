@@ -28,7 +28,6 @@ namespace AggregateGDPPopulation
 
             //reading country continent map text file and making dictionary for the mapping
             string[] countrymap = File.ReadAllLines(@"../../../../AggregateGDPPopulation/data/countriesmap.txt");
-            Console.WriteLine(countrymap[0]);
             Dictionary<string, string> mapper = new Dictionary<string, string>();
 
             foreach (string str in countrymap)
@@ -74,12 +73,13 @@ namespace AggregateGDPPopulation
         }
     }
 
-    public class AggregatePopGDPAsync
+    // class for input output operations on a file
+    public class IOOperations
     {
         public static async Task<string> ReadfileAsync(string filepath)
         {
             string csvdata;
-            using(StreamReader r = new StreamReader(filepath))
+            using (StreamReader r = new StreamReader(filepath))
             {
                 csvdata = await r.ReadToEndAsync();
             }
@@ -93,17 +93,16 @@ namespace AggregateGDPPopulation
                 await w.WriteAsync(JsonConvert.SerializeObject(finalobjects));
             }
         }
+    }
 
+    public class AggregatePopGDPAsync
+    {
         public static async Task AggregateGdpPopAsync(string filename)
         {
-            Task<string> csvdatatask = ReadfileAsync(filename);
-            Task<string> mapperdatatask = ReadfileAsync(@"../../../../AggregateGDPPopulation/data/countriesmap.txt");
-
-            await Task.WhenAll(csvdatatask, mapperdatatask);
-
-            string csvdata = csvdatatask.Result;
+            Task<string> csvdatatask = IOOperations.ReadfileAsync(filename);
+            Task<string> mapperdatatask = IOOperations.ReadfileAsync(@"../../../../AggregateGDPPopulation/data/countriesmap.txt");
+            await mapperdatatask;
             string mapperdata = mapperdatatask.Result;
-            
             // making mapper dictionary
             string[] countrymap = mapperdata.Split('\n');
             Dictionary<string, string> mapper = new Dictionary<string, string>();
@@ -113,7 +112,9 @@ namespace AggregateGDPPopulation
                 string[] row = str.Split(',');
                 mapper[row[0]] = row[1];
             }
-            
+
+            await csvdatatask;
+            string csvdata = csvdatatask.Result;
             // making csv data
             string[] data = csvdata.Split('\n');
             string[] headers = data[0].Split(',');
@@ -123,10 +124,9 @@ namespace AggregateGDPPopulation
 
             Dictionary<string, POPGDPObject> finalobjects = new Dictionary<string, POPGDPObject>();
 
-            // aggregating
+            // aggregating data
             try
             {
-
                 for (int i = 1; i < data.Length; i++)
                 {
                     string[] datarow = data[i].Replace("\"", "").Split(',');
@@ -153,7 +153,7 @@ namespace AggregateGDPPopulation
             catch (Exception) { }
 
             // writing to json
-            await WritefileAsync(@"../../../../AggregateGDPPopulation/data/output.json", finalobjects);
+            await IOOperations.WritefileAsync(@"../../../../AggregateGDPPopulation/data/output.json", finalobjects);
             
         }
 

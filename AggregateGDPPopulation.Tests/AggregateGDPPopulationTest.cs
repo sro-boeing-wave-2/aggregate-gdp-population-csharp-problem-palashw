@@ -45,8 +45,8 @@ namespace AggregateGDPPopulation.Tests
             await AggregatePopGDPAsync.AggregateGdpPopAsync(@"../../../../AggregateGDPPopulation/data/datafile.csv");
            
             // creating actual and expected strings to compare
-            string expecteddata = await AggregatePopGDPAsync.ReadfileAsync(@"../../../expected-output.json"); ;
-            string actualdata = await AggregatePopGDPAsync.ReadfileAsync(@"../../../../AggregateGDPPopulation/data/output.json");
+            string expecteddata = await IOOperations.ReadfileAsync(@"../../../expected-output.json"); ;
+            string actualdata = await IOOperations.ReadfileAsync(@"../../../../AggregateGDPPopulation/data/output.json");
             
             Assert.Equal(expecteddata, actualdata);
 
